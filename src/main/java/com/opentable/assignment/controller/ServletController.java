@@ -2,7 +2,6 @@ package com.opentable.assignment.controller;
 
 import com.opentable.assignment.exceptions.BadRequestException;
 import com.opentable.assignment.service.GoogleCloudStorage;
-import com.opentable.assignment.service.ImageServiceImpl;
 import com.opentable.assignment.util.Constants;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.slf4j.Logger;
@@ -23,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 public class ServletController {
@@ -74,7 +72,7 @@ public class ServletController {
     public ModelAndView list(){
         ModelAndView result = new ModelAndView(Constants.View.DASHBOARD);
         try {
-            Map<String,String> list = ImageServiceImpl.getFilesProcessed();
+            List<String> list = googleCloudStorage.getList(Constants.Directory.RESIZED_IMAGE_DIR);
             result.addObject("image_list",list);
         }catch (Exception ex){
             logger.error("Error while fetching list");

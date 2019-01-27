@@ -28,7 +28,7 @@ public class ImageServiceImpl {
     @Value("${image.resize.cron.interval}")
     private Long interval;
 
-    private static Map<String,String> filesProcessed = new HashMap<>();
+    Set<String> filesProcessed = new HashSet<>();
 
     @PostConstruct
     public void resizeCron(){
@@ -38,7 +38,7 @@ public class ImageServiceImpl {
                     for (String file : list) {
                         Path tempFile = null;
                         String outputImagePath = null;
-                        if (!filesProcessed.containsKey(file)) {
+                        if (!filesProcessed.contains(file)) {
                             try {
                                 byte[] image = googleCloudStorage.downloadFile(file);
                                 String format = file.substring(file.lastIndexOf("."));
@@ -47,9 +47,7 @@ public class ImageServiceImpl {
                                 ImageModificationUtil.resize(image, outputImagePath);
                                 googleCloudStorage.uploadFile(new FileInputStream(outputImagePath),
                                        file.substring(file.indexOf("/")+1), Constants.Directory.RESIZED_IMAGE_DIR);
-                                filesProcessed.put(file,"Processed");
                             }catch (Exception ex){
-                                filesProcessed.put(file,"Error");
                                 logger.error("Error while running resize cron. "+file,ex);
                             }finally {
                                 try {
@@ -60,6 +58,7 @@ public class ImageServiceImpl {
                             }
 
                         }
+                        filesProcessed.add(file);
                     }
                 }
             };
@@ -67,7 +66,4 @@ public class ImageServiceImpl {
             timer.scheduleAtFixedRate(repeatedTask, 0L, interval);
     }
 
-    public static Map<String, String> getFilesProcessed() {
-        return filesProcessed;
-    }
 }

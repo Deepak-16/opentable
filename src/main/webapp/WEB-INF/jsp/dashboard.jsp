@@ -4,6 +4,7 @@
 <%@ page import="java.util.*"%>
 <%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix = "c" %>
 
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 <html>
@@ -22,24 +23,22 @@ a.fixed {
 }
 </style>
 <a class="fixed" href="/">Go to Uploads!</a>
+
 	<table border=3>
 		<tr>
 			<th>Name</th>
-			<th>Status</th>
 		</tr>
 		<%
-		Map<String,String> imgList = (Map<String,String>) request
+		List<String> imgList = (List<String>) request
         						.getAttribute("image_list");
-			for (Map.Entry<String,String> item : imgList.entrySet()) {
+			for (String item : imgList) {
 		%>
 		<tr>
 			<td><c:url value="/download" var="url">
-                  <c:param name="path" value="<%=item.getKey()%>" />
+                  <c:param name="path" value="<%=item%>" />
                 </c:url>
-                <a href="${url}"><%=item.getKey()%></a>
+                <a href="${url}"><%=item%></a>
 			</td>
-			<td><%=item.getValue()%>
-            </td>
 		</tr>
 
 		<%
