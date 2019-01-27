@@ -8,9 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 
@@ -31,19 +33,21 @@ public class ImageServiceImpl {
                     List<String> list = googleCloudStorage.getList(Constants.Directory.ORIGINAL_IMAGE_DIR);
                     for (String file : list) {
                         Path tempFile = null;
+                        String outputImagePath = null;
                         if (!filesProcessed.contains(file)) {
                             try {
                                 byte[] image = googleCloudStorage.downloadFile(file);
                                 String format = file.substring(file.lastIndexOf("."));
                                 tempFile = Files.createTempFile("resized", format);
-                                ImageModificationUtil.resize(image, tempFile.getFileName().toAbsolutePath().toString());
-                                //googleCloudStorage.uploadFile(new FileInputStream(tempFile.getFileName().toAbsolutePath().toString()),
-                                //       file.substring(file.indexOf("/")+1), Constants.Directory.RESIZED_IMAGE_DIR);
+                                outputImagePath = tempFile.getFileName().toAbsolutePath().toString();
+                                ImageModificationUtil.resize(image, outputImagePath);
+                                googleCloudStorage.uploadFile(new FileInputStream(outputImagePath),
+                                       file.substring(file.indexOf("/")+1), Constants.Directory.RESIZED_IMAGE_DIR);
                             }catch (Exception ex){
                                 logger.error("Error while running resize cron.",ex);
                             }finally {
                                 try {
-                                    Files.delete(tempFile);
+                                    Files.delete(Paths.get(outputImagePath));
                                 } catch (IOException ex) {
                                     logger.error("Error while deleting file.",ex);
                                 }
