@@ -1,0 +1,15 @@
+Decision points:
+Project is created using spring boot.
+The data is being managed inmemory.
+Google app engine is used to deploy.
+Google cloud storage is being used for cloud storage.
+Cron is being run every 5 min to resize images.
+There are 2 plages in the application, one to upload image and view uploaded images, second to view resized images.
+There may be a log of 5 min for display of resized images.
+
+Code Structure:
+
+ServletController (To view home page/ upload image/ download image)
+ImageModificationUtil (To resize image)
+ImageServiceImpl (For image resize cron)
+GoogleCloudStorage (For integration of google cloud)
