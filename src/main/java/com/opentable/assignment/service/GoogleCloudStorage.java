@@ -6,6 +6,7 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.ReadChannel;
 import com.google.cloud.storage.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -23,7 +24,10 @@ public class GoogleCloudStorage {
     private static Storage storage = null;
     private static Credentials credentials = null;
     private static String projectId = "opentable";
-    private static String path = "F:\\OpenTable-f4b9416be045.json";
+
+    @Value("${gcs.storage.auth}")
+    private String path;
+
     private static String bucketName = "opentable.appspot.com";
     private static Bucket bucket = null;
 
