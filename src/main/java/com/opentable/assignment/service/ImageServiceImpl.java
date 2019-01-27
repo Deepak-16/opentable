@@ -5,6 +5,7 @@ import com.opentable.assignment.util.ImageModificationUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -23,6 +24,9 @@ public class ImageServiceImpl {
 
     @Autowired
     GoogleCloudStorage googleCloudStorage;
+
+    @Value("${image.resize.cron.interval}")
+    private Long interval;
 
     Set<String> filesProcessed = new HashSet<>();
 
@@ -59,10 +63,7 @@ public class ImageServiceImpl {
                 }
             };
             Timer timer = new Timer("Timer");
-
-            long delay  = 0L;
-            long period = 1000000L;
-            timer.scheduleAtFixedRate(repeatedTask, delay, period);
+            timer.scheduleAtFixedRate(repeatedTask, 0L, interval);
     }
 
 }
