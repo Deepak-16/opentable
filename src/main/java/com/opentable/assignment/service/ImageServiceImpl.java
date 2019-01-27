@@ -48,12 +48,12 @@ public class ImageServiceImpl {
                                 googleCloudStorage.uploadFile(new FileInputStream(outputImagePath),
                                        file.substring(file.indexOf("/")+1), Constants.Directory.RESIZED_IMAGE_DIR);
                             }catch (Exception ex){
-                                logger.error("Error while running resize cron.",ex);
+                                logger.error("Error while running resize cron. "+file,ex);
                             }finally {
                                 try {
-                                    Files.delete(Paths.get(outputImagePath));
+                                    Files.deleteIfExists(Paths.get(outputImagePath));
                                 } catch (IOException ex) {
-                                    logger.error("Error while deleting file.",ex);
+                                    logger.error("Error while deleting file. "+file,ex);
                                 }
                             }
 
