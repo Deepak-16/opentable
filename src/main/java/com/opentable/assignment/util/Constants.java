@@ -15,4 +15,12 @@ public class Constants {
         public static final String RESIZED_IMAGE_DIR = "resized/";
 
     }
+
+    public static class Status{
+
+        public static final String PENDING = "PENDING";
+        public static final String PROCESSED = "PROCESSED";
+        public static final String ERROR = "ERROR";
+
+    }
 }

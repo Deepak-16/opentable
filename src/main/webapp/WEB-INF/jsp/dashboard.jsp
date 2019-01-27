@@ -14,36 +14,54 @@
 </head>
 <body>
 <style>
-a.fixed {
-    position: fixed;
-    right: 0;
-    top: 0;
-    width: 260px;
-    border: 3px solid #73AD21;
+.uploadedFiles {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #2c6da0;
+}
+li {
+  border-bottom: 1px solid #2c6da0;
+  padding: 10px ;
+}
+li#heading {
+ background-color: #2c6da0;
+  color: white;
+
+}
+.list-heading {
+      font-weight: 800;
+    margin-bottom: 0px;
+      font-size: 20px;
+}
+.fixed {
+  margin-bottom: 5px;
+  display: inline-block;
 }
 </style>
-<a class="fixed" href="/">Go to Uploads!</a>
-
-	<table border=3>
-		<tr>
-			<th>Name</th>
-		</tr>
-		<%
-		List<String> imgList = (List<String>) request
-        						.getAttribute("image_list");
-			for (String item : imgList) {
-		%>
-		<tr>
-			<td><c:url value="/download" var="url">
-                  <c:param name="path" value="<%=item%>" />
-                </c:url>
-                <a href="${url}"><%=item%></a>
-			</td>
-		</tr>
-
-		<%
-			}
-		%>
+<div class="uploadedDiv">
+          <p class='list-heading'>Resized file list:</p>
+          <a class="fixed" href="/">(Go to Upload Images)</a>
+          <ul class='uploadedFiles'>
+                   <li id='heading'>
+                      File Name
+                   </li>
+             <%
+                List<String> imgList = (List<String>) request
+                                    .getAttribute("image_list");
+                   for (String item : imgList) {
+                %>
+             <li>
+                   <c:url value="/download" var="url">
+                      <c:param name="path" value="<%=item%>" />
+                   </c:url>
+                   <a href="${url}"><%=item%></a>
+             </li>
+             <%
+                }
+                %>
+          </ul>
+       </div>
 	</table>
 </body>
 </html>
