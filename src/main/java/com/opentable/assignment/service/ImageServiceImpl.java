@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -27,22 +28,29 @@ public class ImageServiceImpl {
     public void resizeCron(){
             TimerTask repeatedTask = new TimerTask() {
                 public void run() {
-                    try {
-                        List<String> list = googleCloudStorage.getList(Constants.Directory.ORIGINAL_IMAGE_DIR);
-                        for (String file : list) {
-                            if (!filesProcessed.contains(file)) {
+                    List<String> list = googleCloudStorage.getList(Constants.Directory.ORIGINAL_IMAGE_DIR);
+                    for (String file : list) {
+                        Path tempFile = null;
+                        if (!filesProcessed.contains(file)) {
+                            try {
                                 byte[] image = googleCloudStorage.downloadFile(file);
                                 String format = file.substring(file.lastIndexOf("."));
-                                Path tempFile = Files.createTempFile("resized",format);
-                                ImageModificationUtil.resize(image,tempFile.getFileName().toAbsolutePath().toString());
+                                tempFile = Files.createTempFile("resized", format);
+                                ImageModificationUtil.resize(image, tempFile.getFileName().toAbsolutePath().toString());
                                 //googleCloudStorage.uploadFile(new FileInputStream(tempFile.getFileName().toAbsolutePath().toString()),
-                                 //       file.substring(file.indexOf("/")+1), Constants.Directory.RESIZED_IMAGE_DIR);
-
+                                //       file.substring(file.indexOf("/")+1), Constants.Directory.RESIZED_IMAGE_DIR);
+                            }catch (Exception ex){
+                                logger.error("Error while running resize cron.",ex);
+                            }finally {
+                                try {
+                                    Files.delete(tempFile);
+                                } catch (IOException ex) {
+                                    logger.error("Error while deleting file.",ex);
+                                }
                             }
-                            filesProcessed.add(file);
+
                         }
-                    }catch (Exception ex){
-                        logger.error("Error while running resize cron.",ex);
+                        filesProcessed.add(file);
                     }
                 }
             };
@@ -51,10 +59,6 @@ public class ImageServiceImpl {
             long delay  = 0L;
             long period = 1000000L;
             timer.scheduleAtFixedRate(repeatedTask, delay, period);
-    }
-
-    public void getFiles(){
-
     }
 
 }

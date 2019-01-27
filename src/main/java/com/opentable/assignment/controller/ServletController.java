@@ -31,7 +31,8 @@ public class ServletController {
     @RequestMapping(value="/", method = RequestMethod.GET)
     public ModelAndView showLoginPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         ModelAndView result = new ModelAndView(Constants.View.HOME);
-        result.addObject("message","test");
+        List<String> list = googleCloudStorage.getList(Constants.Directory.ORIGINAL_IMAGE_DIR);
+        result.addObject("image_list",list);
         return result;
     }
 
@@ -56,6 +57,8 @@ public class ServletController {
             logger.error("Error while upload file ", ex);
             result.addObject("message", "Error while uploading " + ex.getMessage());
         }
+        List<String> list = googleCloudStorage.getList(Constants.Directory.ORIGINAL_IMAGE_DIR);
+        result.addObject("image_list",list);
         return result;
     }
 
