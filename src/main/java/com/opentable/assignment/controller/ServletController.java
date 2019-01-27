@@ -2,6 +2,7 @@ package com.opentable.assignment.controller;
 
 import com.opentable.assignment.exceptions.BadRequestException;
 import com.opentable.assignment.service.GoogleCloudStorage;
+import com.opentable.assignment.service.ImageServiceImpl;
 import com.opentable.assignment.util.Constants;
 import org.apache.tomcat.util.http.fileupload.servlet.ServletFileUpload;
 import org.slf4j.Logger;
@@ -22,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class ServletController {
@@ -51,7 +53,6 @@ public class ServletController {
                         throw new BadRequestException("File cannot be blank!");
                     }
                     InputStream fileContent = filePart.getInputStream();
-                    validateFile(fileContent);
                     googleCloudStorage.uploadFile(fileContent, fileName, Constants.Directory.ORIGINAL_IMAGE_DIR);
                     result.addObject("message", "File Uploaded Successfully");
                 } catch (Exception ex) {
@@ -69,20 +70,11 @@ public class ServletController {
         return result;
     }
 
-    private void validateFile(InputStream input) throws IOException{
-        try {
-            ImageIO.read(input).toString();
-        } catch (Exception e) {
-            input.close();
-            throw new BadRequestException("File does not contain image");
-        }
-    }
-
     @RequestMapping(value = "/list", method = {RequestMethod.GET})
     public ModelAndView list(){
         ModelAndView result = new ModelAndView(Constants.View.DASHBOARD);
         try {
-            List<String> list = googleCloudStorage.getList(Constants.Directory.RESIZED_IMAGE_DIR);
+            Map<String,String> list = ImageServiceImpl.getFilesProcessed();
             result.addObject("image_list",list);
         }catch (Exception ex){
             logger.error("Error while fetching list");

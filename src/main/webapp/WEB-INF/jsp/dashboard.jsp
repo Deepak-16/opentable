@@ -25,18 +25,21 @@ a.fixed {
 	<table border=3>
 		<tr>
 			<th>Name</th>
+			<th>Status</th>
 		</tr>
 		<%
-		List<String> imgList = (List<String>) request
+		Map<String,String> imgList = (Map<String,String>) request
         						.getAttribute("image_list");
-			for (String item : imgList) {
+			for (Map.Entry<String,String> item : imgList.entrySet()) {
 		%>
 		<tr>
 			<td><c:url value="/download" var="url">
-                  <c:param name="path" value="<%=item%>" />
+                  <c:param name="path" value="<%=item.getKey()%>" />
                 </c:url>
-                <a href="${url}"><%=item%></a>
+                <a href="${url}"><%=item.getKey()%></a>
 			</td>
+			<td><%=item.getValue()%>
+            </td>
 		</tr>
 
 		<%
