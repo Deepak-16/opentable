@@ -86,10 +86,7 @@ li#heading {
        <div id="uploadDiv">
           <h3>Upload file:</h3>
           <form action="upload" method="post" enctype="multipart/form-data">
-             <div class="upload-btn-wrapper">
-                <button class="btn">Choose a file</button>
                 <input type="file" name="file" />
-             </div>
              <input type="submit" value="Upload">
           </form>
           <p id="result">
